@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}GOSSIP - Connect & Chat{% endblock %}
+
+{% block additional_styles %}
+        .hero {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #646cff, #535bf2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature h2 {
+            color: #646cff;
+            margin-bottom: 1rem;
+        }
+
+        .feature p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .cta {
+            text-align: center;
+            margin: 4rem 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #646cff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #535bf2;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #646cff;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {% if category == 'error' %}error{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="hero">
+            <h1>Welcome to GOSSIP</h1>
+            <p>Connect with friends, share moments, and chat in real-time. Experience a modern and secure way to stay in touch.</p>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h2>Real-time Chat</h2>
+                <p>Instant messaging with friends. Send messages, share thoughts, and stay connected in real-time.</p>
+            </div>
+            <div class="feature">
+                <h2>Friend Management</h2>
+                <p>Add friends, accept requests, and build your network. Keep track of your connections easily.</p>
+            </div>
+            <div class="feature">
+                <h2>Secure & Private</h2>
+                <p>Your privacy is our priority. Enjoy secure messaging with end-to-end message deletion.</p>
+            </div>
+        </div>
+
+        {% if not current_user.is_authenticated %}
+        <div class="cta">
+            <a href="{{ url_for('signup') }}" class="cta-button">Get Started Now</a>
+        </div>
+        {% endif %}
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">{{ user_count }}</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ message_count }}</div>
+                <div class="stat-label">Messages Sent</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ friendship_count }}</div>
+                <div class="stat-label">Friendships Made</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

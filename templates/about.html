@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}About - GOSSIP{% endblock %}
+
+{% block additional_styles %}
+        .about-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .about-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #646cff, #535bf2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .about-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature h3 {
+            color: #646cff;
+            margin-bottom: 1rem;
+        }
+
+        .feature p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .team {
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .team h2 {
+            color: #646cff;
+            margin-bottom: 2rem;
+        }
+
+        .team-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .team-member img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            object-fit: cover;
+        }
+
+        .team-member h3 {
+            color: #646cff;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .cta {
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #646cff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #535bf2;
+        }
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="about-container">
+            <div class="about-header">
+                <h1>About GOSSIP</h1>
+                <p>A modern chat platform designed for seamless communication and connection</p>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <h3>Real-time Chat</h3>
+                    <p>Instant messaging with friends, real-time updates, and seamless communication.</p>
+                </div>
+                <div class="feature">
+                    <h3>Friend Management</h3>
+                    <p>Add friends, manage connections, and build your network with ease.</p>
+                </div>
+                <div class="feature">
+                    <h3>Secure & Private</h3>
+                    <p>Your privacy is our priority. Enjoy secure messaging with end-to-end message deletion.</p>
+                </div>
+            </div>
+
+            <div class="team">
+                <h2>Our Team</h2>
+                <div class="team-members">
+                    <div class="team-member">
+                        <img src="https://via.placeholder.com/100" alt="Team Member">
+                        <h3>John Doe</h3>
+                        <p>Lead Developer</p>
+                    </div>
+                    <div class="team-member">
+                        <img src="https://via.placeholder.com/100" alt="Team Member">
+                        <h3>Jane Smith</h3>
+                        <p>UI/UX Designer</p>
+                    </div>
+                    <div class="team-member">
+                        <img src="https://via.placeholder.com/100" alt="Team Member">
+                        <h3>Mike Johnson</h3>
+                        <p>Backend Engineer</p>
+                    </div>
+                </div>
+            </div>
+
+            {% if not current_user.is_authenticated %}
+            <div class="cta">
+                <a href="{{ url_for('signup') }}" class="cta-button">Join GOSSIP Today</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

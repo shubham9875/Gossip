@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block title %}Friends - GOSSIP{% endblock %}
+
+{% block additional_styles %}
+        .friends-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .friend-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .friend-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .friend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .friend-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .friend-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #646cff;
+        }
+
+        .friend-email {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .friend-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .friend-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .chat-button {
+            background-color: #646cff;
+            color: white;
+        }
+
+        .chat-button:hover {
+            background-color: #535bf2;
+        }
+
+        .remove-button {
+            background-color: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+        }
+
+        .remove-button:hover {
+            background-color: rgba(255, 68, 68, 0.2);
+        }
+
+        .search-section {
+            margin-bottom: 3rem;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #646cff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-button:hover {
+            background-color: #535bf2;
+        }
+
+        .search-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .user-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .user-name {
+            font-weight: bold;
+            color: #646cff;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .add-friend {
+            background-color: #646cff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-friend:hover {
+            background-color: #535bf2;
+        }
+
+        .add-friend.pending {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+
+        .section-title {
+            color: #646cff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .no-results {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .search-error {
+            color: #ff4444;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: none;
+        }
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="search-section">
+            <h2 class="section-title">Find Friends</h2>
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="Search by name or email...">
+                <button onclick="searchUsers()" class="search-button">Search</button>
+            </div>
+            <div id="search-error" class="search-error"></div>
+            <div id="search-results" class="search-results"></div>
+        </div>
+
+        <h2 class="section-title">Your Friends</h2>
+        <div class="friends-container">
+            {% if friends %}
+                {% for friend in friends %}
+                    <div class="friend-card">
+                        <div class="friend-header">
+                            <div class="friend-info">
+                                <div class="friend-name">{{ friend.name }}</div>
+                                <div class="friend-email">{{ friend.email }}</div>
+                            </div>
+                        </div>
+                        <div class="friend-actions">
+                            <a href="{{ url_for('chats', friend_id=friend.id) }}" class="friend-button chat-button">Chat</a>
+                            <button onclick="removeFriend({{ friend.id }})" class="friend-button remove-button">Remove</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-results">
+                    <p>You haven't added any friends yet. Use the search above to find friends!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        const searchError = document.getElementById('search-error');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(searchUsers, 300);
+        });
+
+        function searchUsers() {
+            const query = searchInput.value.trim();
+            if (!query) {
+                searchResults.innerHTML = '';
+                searchError.style.display = 'none';
+                return;
+            }
+
+            fetch(`/search_users?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    searchError.style.display = 'none';
+                    displaySearchResults(data);
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    searchResults.innerHTML = '';
+                    searchError.textContent = 'An error occurred while searching. Please try again.';
+                    searchError.style.display = 'block';
+                });
+        }
+
+        function displaySearchResults(users) {
+            if (users.length === 0) {
+                searchResults.innerHTML = '<p class="no-results">No users found</p>';
+                return;
+            }
+
+            searchResults.innerHTML = users.map(user => `
+                <div class="user-card">
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-email">${user.email}</div>
+                    </div>
+                    <div class="user-actions">
+                        ${getFriendshipButton(user)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getFriendshipButton(user) {
+            switch (user.friendship_status) {
+                case 'none':
+                    return `<button onclick="sendFriendRequest(${user.id})" class="friend-button add-button">Add Friend</button>`;
+                case 'pending':
+                    return `<button class="friend-button pending-button" disabled>Request Pending</button>`;
+                case 'accepted':
+                    return `
+                        <a href="/chats/${user.id}" class="friend-button chat-button">Chat</a>
+                        <button onclick="unfriend(${user.id})" class="friend-button unfriend-button">Unfriend</button>
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        function sendFriendRequest(userId) {
+            fetch(`/send_friend_request/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                searchUsers(); // Refresh search results
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send friend request. Please try again.');
+            });
+        }
+
+        function unfriend(userId) {
+            if (!confirm('Are you sure you want to unfriend this user?')) {
+                return;
+            }
+
+            fetch(`/unfriend/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                searchUsers(); // Refresh search results
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to unfriend user. Please try again.');
+            });
+        }
+    </script>
+{% endblock %}

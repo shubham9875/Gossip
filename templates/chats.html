@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Chats - GOSSIP{% endblock %}
+
+{% block additional_styles %}
+        .chat-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            height: calc(100vh - 6rem);
+        }
+
+        .chat-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .chat-item:hover,
+        .chat-item.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .chat-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-item-name {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-item-preview {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-window {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .chat-header-info h2 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .chat-header-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .message.sent {
+            background: #646cff;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.25rem;
+        }
+
+        .message.sent .message-time {
+            text-align: right;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .send-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background: #646cff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .send-button:hover {
+            background: #535bf2;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 1rem;
+            color: #646cff;
+        }
+
+        .empty-state p {
+            margin-bottom: 2rem;
+        }
+
+        .start-chat-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background: #646cff;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .start-chat-btn:hover {
+            background: #535bf2;
+        }
+
+        .message-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .delete-message {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .delete-message:hover {
+            color: #ff4444;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+                height: calc(100vh - 4rem);
+            }
+
+            .chat-list {
+                display: none;
+            }
+
+            .chat-list.show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1000;
+            }
+        }
+{% endblock %}
+
+{% block content %}
+    <div class="chat-container">
+        <div class="chat-list">
+            {% for friend in friends %}
+                <a href="{{ url_for('chats', friend_id=friend.id) }}" class="chat-item {% if active_friend and friend.id == active_friend.id %}active{% endif %}">
+                    <img src="{{ friend.profile_picture or 'https://www.gravatar.com/avatar/' + ((friend.email or '') | lower | md5) + '?s=40&d=identicon' }}" alt="{{ friend.name }}">
+                    <div class="chat-item-info">
+                        <div class="chat-item-name">{{ friend.name }}</div>
+                        <div class="chat-item-preview">
+                            {% if friend_messages[friend.id] %}
+                                {% if friend_messages[friend.id].sender_id == current_user.id %}
+                                    You: {{ friend_messages[friend.id].content }}
+                                {% else %}
+                                    {{ friend_messages[friend.id].content }}
+                                {% endif %}
+                            {% else %}
+                                No messages yet
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="chat-window">
+            {% if active_friend %}
+                <div class="chat-header">
+                    <img src="{{ active_friend.profile_picture or 'https://www.gravatar.com/avatar/' + ((active_friend.email or '') | lower | md5) + '?s=40&d=identicon' }}" alt="{{ active_friend.name }}">
+                    <div class="chat-header-info">
+                        <h2>{{ active_friend.name }}</h2>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chat-messages">
+                    {% for message in messages %}
+                        <div class="message {{ 'sent' if message.sender_id == current_user.id else 'received' }}">
+                            {{ message.content }}
+                            <div class="message-time">{{ message.created_at.strftime('%I:%M %p') }}</div>
+                            {% if message.sender_id == current_user.id %}
+                                <div class="message-actions">
+                                    <form action="{{ url_for('delete_message', message_id=message.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="delete-message" onclick="return confirm('Delete this message?')">×</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <form class="chat-input" method="POST" action="{{ url_for('send_message', friend_id=active_friend.id) }}">
+                    <input type="text" name="message" placeholder="Type your message..." required autocomplete="off">
+                    <button type="submit" class="send-button">Send</button>
+                </form>
+            {% else %}
+                <div class="empty-state">
+                    <h2>Welcome to GOSSIP Chat</h2>
+                    <p>Select a chat from the list or start a new conversation with a friend.</p>
+                    <a href="{{ url_for('friends') }}" class="start-chat-btn">Find Friends</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // Scroll to bottom of messages
+        function scrollToBottom() {
+            const messages = document.getElementById('chat-messages');
+            if (messages) {
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+
+        // Scroll on page load
+        window.onload = scrollToBottom;
+
+        // Auto-scroll when new messages arrive
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            const observer = new MutationObserver(scrollToBottom);
+            observer.observe(chatMessages, { childList: true });
+        }
+    </script>
+{% endblock %}
